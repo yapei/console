@@ -86,10 +86,12 @@ export const ClusterServiceVersionList: React.StatelessComponent<ClusterServiceV
       <div className="co-clusterserviceversion-list__section co-clusterserviceversion-list__section--catalog">
         <h1 className="co-section-title">Open Cloud Services</h1>
         <div className="co-clusterserviceversion-list__section--catalog__items">
-          { apps.filter(({metadata}, i, allCSVs) => i === _.findIndex(allCSVs, (csv => csv.metadata.name === metadata.name))).map((csv, i) => (
-            <div className="co-clusterserviceversion-list__section--catalog__items__item" key={i}>
-              <ClusterServiceVersionListItem obj={csv} namespaces={namespacesForApp(csv.metadata.name)} />
-            </div>)) }
+          { apps.filter(({metadata}, i, allCSVs) => i === _.findIndex(allCSVs, (csv => csv.metadata.name === metadata.name)))
+            .filter(({metadata}, _, allCSVs) => !allCSVs.some(({spec}) => spec.replaces === metadata.name))
+            .map((csv, i) => (
+              <div className="co-clusterserviceversion-list__section--catalog__items__item" key={i}>
+                <ClusterServiceVersionListItem obj={csv} namespaces={namespacesForApp(csv.metadata.name)} />
+              </div>)) }
         </div>
       </div>
     </div>

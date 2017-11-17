@@ -171,6 +171,14 @@ describe(ClusterServiceVersionList.displayName, () => {
     expect(list.at(0).props().obj.metadata.name).toEqual('repeat');
     expect(list.at(1).props().obj.metadata.name).not.toEqual('repeat');
   });
+
+  it('does not render ClusterServiceVersions that are being replaced', () => {
+    apps[1].spec.replaces = apps[0].metadata.name;
+    wrapper.setProps({data: apps});
+    const list = wrapper.find('.co-clusterserviceversion-list__section--catalog__items').find(ClusterServiceVersionListItem);
+
+    expect(list.length).toEqual(2);
+  });
 });
 
 describe(ClusterServiceVersionsPage.displayName, () => {
