@@ -1,18 +1,13 @@
-import { $, browser, ExpectedConditions as until } from 'protractor';
+import { $, browser } from 'protractor';
 import { appHost } from '../protractor.conf';
 import * as loginView from '../views/login.view';
-import * as sidenavView from '../views/sidenav.view';
-import * as clusterSettingsView from '../views/cluster-settings.view';
 
 const JASMINE_DEFAULT_TIMEOUT_INTERVAL = jasmine.DEFAULT_TIMEOUT_INTERVAL;
 const JASMINE_EXTENDED_TIMEOUT_INTERVAL = 1000 * 60 * 3;
-const KUBEADMIN_IDP = 'kube:admin';
-const KUBEADMIN_USERNAME = 'kubeadmin';
 const {
-  BRIDGE_HTPASSWD_IDP = 'test',
-  BRIDGE_HTPASSWD_USERNAME = 'test',
-  BRIDGE_HTPASSWD_PASSWORD = 'test',
-  BRIDGE_KUBEADMIN_PASSWORD,
+  BRIDGE_SPECIFY_IDP = 'test',
+  BRIDGE_SPECIFY_USERNAME = 'test',
+  BRIDGE_SPECIFY_PASSWORD,
 } = process.env;
 
 describe('Auth test', () => {
@@ -21,7 +16,6 @@ describe('Auth test', () => {
     await browser.sleep(3000); // Wait long enough for the login redirect to complete
   });
 
-  if (BRIDGE_KUBEADMIN_PASSWORD) {
     describe('Login test', async() => {
       beforeAll(() => {
         // Extend the default jasmine timeout interval just in case it takes a while for the htpasswd idp to be ready
@@ -33,42 +27,20 @@ describe('Auth test', () => {
         jasmine.DEFAULT_TIMEOUT_INTERVAL = JASMINE_DEFAULT_TIMEOUT_INTERVAL;
       });
 
-      it('logs in via htpasswd identity provider', async() => {
-        await loginView.login(BRIDGE_HTPASSWD_IDP, BRIDGE_HTPASSWD_USERNAME, BRIDGE_HTPASSWD_PASSWORD);
+      it('logs in via specified identity provider', async() => {
+        await loginView.login(BRIDGE_SPECIFY_IDP, BRIDGE_SPECIFY_USERNAME, BRIDGE_SPECIFY_PASSWORD);
         expect(browser.getCurrentUrl()).toContain(appHost);
-        expect(loginView.userDropdown.getText()).toContain(BRIDGE_HTPASSWD_USERNAME);
+        expect(loginView.userDropdown.getText()).toContain(BRIDGE_SPECIFY_USERNAME);
       });
 
-      it('logs out htpasswd user', async() => {
-        await loginView.logout();
-        expect(browser.getCurrentUrl()).toContain('oauth-openshift');
-        expect($('.login-pf').isPresent()).toBeTruthy();
-      });
-
-      it('logs in as kubeadmin user', async() => {
-        await loginView.login(KUBEADMIN_IDP, KUBEADMIN_USERNAME, BRIDGE_KUBEADMIN_PASSWORD);
-        expect(browser.getCurrentUrl()).toContain(appHost);
-        expect(loginView.userDropdown.getText()).toContain('kube:admin');
-        await browser.wait(until.presenceOf($('.co-global-notification')));
-        expect($('.co-global-notifications').getText()).toContain('You are logged in as a temporary administrative user. Update the cluster OAuth configuration to allow others to log in.');
-      });
-
-      it('logs out kubeadmin user', async() => {
+      it('logs out specified user', async() => {
         await loginView.logout();
         expect(browser.getCurrentUrl()).toContain('oauth-openshift');
         expect($('.login-pf').isPresent()).toBeTruthy();
 
         // Log back in so that remaining tests can be run
-        await loginView.login(KUBEADMIN_IDP, KUBEADMIN_USERNAME, BRIDGE_KUBEADMIN_PASSWORD);
-        expect(loginView.userDropdown.getText()).toContain('kube:admin');
+        await loginView.login(BRIDGE_SPECIFY_IDP, BRIDGE_SPECIFY_USERNAME, BRIDGE_SPECIFY_PASSWORD);
+        expect(loginView.userDropdown.getText()).toContain(BRIDGE_SPECIFY_USERNAME);
       });
     });
-  }
-  it('is authenticated as cluster admin user', async() => {
-    expect(await browser.getCurrentUrl()).toContain(appHost);
-    await browser.wait(until.visibilityOf(sidenavView.navSectionFor('Administration')));
-    await sidenavView.clickNavLink(['Administration', 'Cluster Settings']);
-    await clusterSettingsView.isLoaded();
-    expect(clusterSettingsView.heading.isDisplayed()).toBeTruthy();
-  });
 });
