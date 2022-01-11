@@ -283,5 +283,13 @@
       "getUtilizationQueries": { "$codeRef": "clusterOverview.getUtilizationQueries" },
       "humanize": { "$codeRef": "clusterOverview.humanize" }
     }
+  },
+  {
+    "type": "console.navigation/separator",
+    "properties": {
+      "id": "yapei-test-separator",
+      "perspective": "admin",
+      "section": "admin-demo-section"
+    }
   }
 ]

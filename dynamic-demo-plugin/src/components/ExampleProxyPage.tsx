@@ -39,7 +39,7 @@ const ExampleProxyResponse: React.FC = () => {
   const [data, setData] = React.useState();
 
   React.useEffect(() => {
-    consoleFetchJSON('/api/proxy/namespace/openshift-monitoring/service/thanos-querier:9091/api/v1/rules')
+    consoleFetchJSON('/api/proxy/console-demo-plugin/demoplugin/api/v1/rules')
       .then((response) => {
         setData(response);
       })
