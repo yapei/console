@@ -58,9 +58,10 @@
 56.  [`ResourceEventStream`](#resourceeventstream)
 57.  [`usePrometheusPoll`](#useprometheuspoll)
 58.  [`Timestamp`](#timestamp)
-59. [DEPRECATED] [`PerspectiveContext`](#perspectivecontext)
-60. [DEPRECATED] [`useAccessReviewAllowed`](#useaccessreviewallowed)
-61. [DEPRECATED] [`useSafetyFirst`](#usesafetyfirst)
+59.  [`ActionServiceProvider`](#actionserviceprovider)
+60. [DEPRECATED] [`PerspectiveContext`](#perspectivecontext)
+61. [DEPRECATED] [`useAccessReviewAllowed`](#useaccessreviewallowed)
+62. [DEPRECATED] [`useSafetyFirst`](#usesafetyfirst)
 
 ---
 
@@ -2020,6 +2021,45 @@ A component to render timestamp.<br/>The timestamps are synchronized between inv
 | `simple` | render simple version of the component omitting icon and tooltip. |
 | `omitSuffix` | formats the date ommiting the suffix. |
 | `className` | additional class name for the component. |
+
+
+
+---
+
+## `ActionServiceProvider`
+
+### Summary 
+
+Component that allows to receive contributions from other plugins for the `console.action/provider` extension type.<br/>See docs: https://github.com/openshift/console/blob/master/frontend/packages/console-dynamic-plugin-sdk/docs/console-extensions.md#consoleactionprovider
+
+
+
+### Example
+
+
+```tsx
+   const context: ActionContext = { 'a-context-id': { dataFromDynamicPlugin } };
+
+   ...
+
+   <ActionServiceProvider context={context}>
+       {({ actions, options, loaded }) =>
+         loaded && (
+           <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+         )
+       }
+   </ActionServiceProvider>
+```
+
+
+
+
+
+### Parameters
+
+| Parameter Name | Description |
+| -------------- | ----------- |
+| `context` | Object with contextId and optional plugin data |
 
 
 
