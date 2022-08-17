@@ -332,5 +332,12 @@
       "getUtilizationQuery":  { "$codeRef": "projectOverview.getUtilizationQuery" },
       "humanize": { "$codeRef": "clusterOverview.humanize"}
     }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "alert-detail-toolbar-actions",
+      "provider": { "$codeRef": "LogActionsProvider" }
+    }
   }
 ]
