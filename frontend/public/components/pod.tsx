@@ -121,6 +121,7 @@ import { sortResourceByValue } from './factory/Table/sort';
 import { useActiveColumns } from './factory/Table/active-columns-hook';
 import { PodDisruptionBudgetField } from '@console/app/src/components/pdb/PodDisruptionBudgetField';
 import { PodTraffic } from './pod-traffic';
+import { useDeleteModal } from '@console/shared/src/hooks/useDeleteModal';
 // Only request metrics if the device's screen width is larger than the
 // breakpoint where metrics are visible.
 const showMetrics =
@@ -808,15 +809,19 @@ export const PodStatus: React.FC<PodStatusProps> = ({ pod }) => {
 
   return <Status status={status} />;
 };
-
+const unknownResource = {
+  kind: 'Pod',
+};
 export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
   const { t } = useTranslation();
+  const launchDeleteModal = useDeleteModal(unknownResource);
   return (
     <dl className="co-m-pane__details">
       <dt>{t('public~Status')}</dt>
       <dd>
         <PodStatus pod={pod} />
       </dd>
+      <button onClick={launchDeleteModal}>{t('Delete Pod')}</button>
       <DetailsItem label={t('public~Restart policy')} obj={pod} path="spec.restartPolicy">
         {getRestartPolicyLabel(pod)}
       </DetailsItem>
