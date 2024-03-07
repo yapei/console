@@ -9,6 +9,7 @@ import {
   K8sResourceCommon,
   ListPageFilter,
   RowFilter,
+  RowSearchFilter,
   TableData,
   RowProps,
   ResourceLink,
@@ -86,6 +87,21 @@ export const filters: RowFilter[] = [
   },
 ];
 
+export const searchFilters: RowSearchFilter[] = [
+  {
+    filterGroupName: 'IP Address',
+    type: 'pod-id',
+    filter: (input, pod) => {
+      const podIP = pod.status?.podIP;
+      if (input.selected?.length) {
+        return input.selected === podIP;
+      }
+    },
+    'placeholder': 'Search by IP Address'
+  },
+];
+
+
 const ListPage = () => {
   const [pods, loaded, loadError] = useK8sWatchResource<K8sResourceCommon[]>({
     groupVersionKind: {
@@ -112,6 +128,7 @@ const ListPage = () => {
           loaded={loaded}
           rowFilters={filters}
           onFilterChange={onFilterChange}
+          rowSearchFilters={searchFilters}
         />
         <PodsTable
           data={filteredData}
